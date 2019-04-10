@@ -46,7 +46,7 @@ class ForwarderDF: public bica_dialog::DialogInterface
   public:
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
     {
-      trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this);
+      trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
     }
 
     void listenCallback(dialogflow_ros_msgs::DialogflowResult result)
