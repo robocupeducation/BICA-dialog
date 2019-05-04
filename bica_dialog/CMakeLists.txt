@@ -34,14 +34,20 @@ add_library(bica_dialog
 )
 
 add_executable(main_DialogInterface src/main_DialogInterface.cpp)
+add_executable(talkPublisher src/talkPublisher.cpp)
+add_executable(talkSubscriber src/talkSubscriber.cpp)
 
 add_dependencies(bica_dialog ${catkin_EXPORTED_TARGETS})
 add_dependencies(main_DialogInterface ${catkin_EXPORTED_TARGETS})
+add_dependencies(talkPublisher ${catkin_EXPORTED_TARGETS})
+add_dependencies(talkSubscriber ${catkin_EXPORTED_TARGETS})
 
 
 
 target_link_libraries(bica_dialog ${catkin_LIBRARIES})
 target_link_libraries(main_DialogInterface ${catkin_LIBRARIES} bica_dialog)
+target_link_libraries(talkPublisher ${catkin_LIBRARIES} bica_dialog)
+target_link_libraries(talkSubscriber ${catkin_LIBRARIES} bica_dialog)
 
 
 
