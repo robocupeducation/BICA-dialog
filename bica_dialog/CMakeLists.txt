@@ -33,7 +33,6 @@ add_library(bica_dialog
 	src/DialogInterface.cpp
 )
 
-add_executable(example_df_node src/example/exampleDF.cpp)
 add_executable(main_DialogInterface src/main_DialogInterface.cpp)
 
 add_dependencies(bica_dialog ${catkin_EXPORTED_TARGETS})
@@ -42,11 +41,11 @@ add_dependencies(main_DialogInterface ${catkin_EXPORTED_TARGETS})
 
 
 target_link_libraries(bica_dialog ${catkin_LIBRARIES})
-target_link_libraries(main_DialogInterface ${catkin_LIBRARIES})
+target_link_libraries(main_DialogInterface ${catkin_LIBRARIES} bica_dialog)
 
 
 
-
+add_executable(example_df_node src/example/exampleDF.cpp)
 add_dependencies(example_df_node ${catkin_EXPORTED_TARGETS} )
 target_link_libraries(example_df_node ${catkin_LIBRARIES} bica_dialog)
 
