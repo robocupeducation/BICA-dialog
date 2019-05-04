@@ -35,7 +35,9 @@
 /* Author: Jonatan Gines jginesclavero@gmail.com */
 
 /* Mantainer: Jonatan Gines jginesclavero@gmail.com */
-#include <bica_dialog/DialogInterface.h>
+
+#include "bica_dialog/DialogInterface.h"
+#include <ros/ros.h>
 #include <std_msgs/Empty.h>
 #include <string>
 
@@ -71,8 +73,13 @@ class ForwarderDF: public bica_dialog::DialogInterface
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "example_df_node");
+  // std::string intent_in = "Default Welcome Intent";
   std::regex intent_in("[[:print:]_]*.info");
   bica_dialog::ForwarderDF forwarder(intent_in);
-  ros::spin();
+  while(ros::ok()){
+      forwarder.listen();
+      ros::spinOnce();
+      ROS_INFO("Hola");
+  }
   return 0;
 }
