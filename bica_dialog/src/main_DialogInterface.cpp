@@ -87,7 +87,6 @@ int main(int argc, char** argv)
       forwarder.listen();
       ros::spinOnce();
       ROS_INFO("Hola");
->>>>>>> 05da957b700452876f2d865b652a1119ac285205
   }
   return 0;
 }
