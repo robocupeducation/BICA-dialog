@@ -76,17 +76,11 @@ int main(int argc, char** argv)
   // std::string intent_in = "Default Welcome Intent";
   std::regex intent_in("[[:print:]_]*.info");
   bica_dialog::ForwarderDF forwarder(intent_in);
-<<<<<<< HEAD
   //forwarder.speak("Pepe");
   while(ros::ok()){
       forwarder.listen();
       ros::spinOnce();
       //ROS_INFO("Hola");
-=======
-  while(ros::ok()){
-      forwarder.listen();
-      ros::spinOnce();
-      ROS_INFO("Hola");
   }
   return 0;
 }
