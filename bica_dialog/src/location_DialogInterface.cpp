@@ -73,21 +73,11 @@ class ForwarderDF: public bica_dialog::DialogInterface
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "example_df_node");
-  // std::string intent_in = "Default Welcome Intent";
-  std::regex intent_in("[[:print:]_]*.info");
+  std::regex intent_in("[[:print:]_]*.location");
   bica_dialog::ForwarderDF forwarder(intent_in);
-<<<<<<< HEAD
-  //forwarder.speak("Pepe");
   while(ros::ok()){
       forwarder.listen();
       ros::spinOnce();
-      //ROS_INFO("Hola");
-=======
-  while(ros::ok()){
-      forwarder.listen();
-      ros::spinOnce();
-      ROS_INFO("Hola");
->>>>>>> 05da957b700452876f2d865b652a1119ac285205
   }
   return 0;
 }
