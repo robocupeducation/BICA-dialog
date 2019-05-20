@@ -39,6 +39,7 @@
 #include "bica_dialog/DialogInterface.h"
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/String.h>
 #include <string>
 
 namespace bica_dialog
@@ -49,15 +50,21 @@ class ForwarderDF: public bica_dialog::DialogInterface
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
     {
       trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
+      locationPublisher = nh_.advertise<std_msgs::String>("/locations", 1);
     }
 
     void listenCallback(dialogflow_ros_msgs::DialogflowResult result)
     {
       ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
       result_ = result;
+      std_msgs::String msg;
       for (int i = 0; i<result.parameters.size();i++){
         for (int j = 0; j<result.parameters[i].value.size();j++){
-          ROS_INFO("[IdentificationDF] listenCallback: parameter %s value %s", result.parameters[i].param_name.c_str(), result.parameters[i].value[j].c_str());
+          ROS_INFO("[ForwarderDF] listenCallback:value %s", result.parameters[i].value[j].c_str());
+          msg.data = result.parameters[i].value[j];
+          ROS_INFO("%s",result.parameters[i].value[j].c_str());
+          locationPublisher.publish(msg);
+          ros::spinOnce();
         }
       }
       speak(result_.fulfillment_text);
@@ -71,13 +78,16 @@ class ForwarderDF: public bica_dialog::DialogInterface
   private:
     ros::NodeHandle nh_;
     ros::Subscriber trigger_sub_;
+    ros::Publisher locationPublisher;
     dialogflow_ros_msgs::DialogflowResult result_;
 };
 }  // namespace bica_dialog
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "example_df_node");
+
+  ros::init(argc, argv, "locationDialogflowNode");
+
   std::regex intent_in("[[:print:]_]*.location");
   bica_dialog::ForwarderDF forwarder(intent_in);
   while(ros::ok()){
