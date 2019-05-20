@@ -55,6 +55,11 @@ class ForwarderDF: public bica_dialog::DialogInterface
     {
       ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
       result_ = result;
+      for (int i = 0; i<result.parameters.size();i++){
+        for (int j = 0; j<result.parameters[i].value.size();j++){
+          ROS_INFO("[IdentificationDF] listenCallback: parameter %s value %s", result.parameters[i].param_name.c_str(), result.parameters[i].value[j].c_str());
+        }
+      }
       speak(result_.fulfillment_text);
     }
 
