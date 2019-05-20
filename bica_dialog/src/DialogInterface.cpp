@@ -98,7 +98,6 @@ bool DialogInterface::speak(std::string str)
     sound_play::SoundRequestGoal goal;
     goal.sound_request.sound = sound_play::SoundRequest::SAY;
     goal.sound_request.command = sound_play::SoundRequest::PLAY_ONCE;
-    ROS_INFO("%s",str);
     goal.sound_request.arg = str;
     goal.sound_request.volume = 1.0;
     ac.sendGoal(goal);
