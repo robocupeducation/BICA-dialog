@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   sound_play
   actionlib
   actionlib_msgs
+  bica
+  bica_msgs
 )
 
 catkin_package(
