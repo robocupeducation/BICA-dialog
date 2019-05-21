@@ -69,9 +69,8 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
     }
 
     void listener(){
-      ros::Rate loop_rate(3);
+      ros::Rate loop_rate(2);
       while(ros::ok()){
-        ROS_INFO("%i", isActive());
         if (isActive()){
           ROS_INFO("listening...");
           listen();
