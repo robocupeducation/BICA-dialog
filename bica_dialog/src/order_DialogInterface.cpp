@@ -36,6 +36,7 @@
 
 /* Mantainer: Jonatan Gines jginesclavero@gmail.com */
 
+#include "bica/Component.h"
 #include "bica_dialog/DialogInterface.h"
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
@@ -44,7 +45,7 @@
 
 namespace bica_dialog
 {
-class ForwarderDF: public bica_dialog::DialogInterface
+class ForwarderDF: public bica_dialog::DialogInterface,public bica::Component
 {
   public:
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
@@ -68,6 +69,15 @@ class ForwarderDF: public bica_dialog::DialogInterface
       }
     }
 
+    void listener(){
+        if (isActive()){
+            while(ros::ok()){
+                listen();
+                ros::spinOnce();
+            }
+        }
+    }
+
     void triggerCallback(const std_msgs::Empty::ConstPtr& msg)
     {
       listen();
@@ -88,9 +98,6 @@ int main(int argc, char** argv)
 
   std::regex intent_in("[[:print:]_]*.order");
   bica_dialog::ForwarderDF forwarder(intent_in);
-  while(ros::ok()){
-      forwarder.listen();
-      ros::spinOnce();
-  }
+  forwarder.listener();
   return 0;
 }
