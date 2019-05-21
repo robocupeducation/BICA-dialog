@@ -69,12 +69,16 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
     }
 
     void listener(){
+      ros::Rate loop_rate(3);
+      while(ros::ok()){
+        ROS_INFO("%i", isActive());
         if (isActive()){
-            while(ros::ok()){
-                listen();
-                ros::spinOnce();
-            }
+          ROS_INFO("listening...");
+          listen();
         }
+        ros::spinOnce();
+        loop_rate.sleep();
+      }
     }
 
     void triggerCallback(const std_msgs::Empty::ConstPtr& msg)
@@ -93,7 +97,7 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "commandsDialogflowNode");
+  ros::init(argc, argv, "commands_DialogInterface");
   std::regex intent_in("[[:print:]_]*.commands");
   bica_dialog::ForwarderDF forwarder(intent_in);
   forwarder.listener();
