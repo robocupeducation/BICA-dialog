@@ -1,4 +1,3 @@
-
 #include "bica_dialog/DialogInterface.h"
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
