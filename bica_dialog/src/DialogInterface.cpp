@@ -80,12 +80,10 @@ std::regex DialogInterface::getIntentRegex()
 
 void DialogInterface::dfCallback(const dialogflow_ros_msgs::DialogflowResult::ConstPtr& result)
 {
-  if(result->intent == intent_ || std::regex_match(result->intent, intent_re_))
-  {
-    is_bussy_ = false;
-    listenCallback(*result);
-  }
-
+    if(result->intent == intent_ || std::regex_match(result->intent, intent_re_)){
+        is_bussy_ = false;
+        listenCallback(*result);
+    }
 }
 
 bool DialogInterface::speak(std::string str)

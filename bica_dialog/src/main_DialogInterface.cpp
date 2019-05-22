@@ -39,37 +39,57 @@
 #include "bica_dialog/DialogInterface.h"
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/String.h>
 #include <string>
 #include "bica/Component.h"
+#include <regex>
 
 namespace bica_dialog
 {
-class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
+// class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
+class ForwarderDF: public bica_dialog::DialogInterface
 {
   public:
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
     {
       trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
       finishSpeakPublisher = nh_.advertise<std_msgs::Empty>("/finish_speak", 1);
+      errorPublisher = nh_.advertise<std_msgs::String>("/errors", 1);
     }
 
     void listenCallback(dialogflow_ros_msgs::DialogflowResult result)
     {
-      ROS_INFO("[ForwarderDF] listenCallback: intent %s", result);
-      ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
-      result_ = result;
-      speak(result_.fulfillment_text);
-      std_msgs::Empty msg;
-      finishSpeakPublisher.publish(msg);
+        std::regex filter ("(.*)(.info)");
+        ROS_INFO("[ForwarderDF] Query text: %s", result.query_text.c_str());
+        if (result.query_text != ""){
+            if(regex_match(result.intent, filter)){
+                // ROS_INFO("[ForwarderDF] listenCallback: intent %s", result);
+                ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
+                result_ = result;
+                speak(result_.fulfillment_text);
+                std_msgs::Empty msg;
+                finishSpeakPublisher.publish(msg);
+            }else{
+                speak("I didn't catch you, can you repeat it please?");
+                attemp++;
+                if(attemp == 3){
+                    ROS_INFO("[ForwarderDF] number of failed attemps %i", attemp);
+                    std_msgs::String msg;
+                    msg.data = "unknown command";
+                    errorPublisher.publish(msg);
+                    attemp = 0;
+                }
+            }
+        }
     }
 
     void listener(){
       ros::Rate loop_rate(2);
       while(ros::ok()){
-        if (isActive()){
+        // if (isActive()){
           ROS_INFO("listening...");
           listen();
-        }
+        // }
         ros::spinOnce();
         loop_rate.sleep();
       }
@@ -85,14 +105,16 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
     ros::Subscriber trigger_sub_;
     dialogflow_ros_msgs::DialogflowResult result_;
     ros::Publisher finishSpeakPublisher;
+    ros::Publisher errorPublisher;
+    int attemp = 0;
 };
 }  // namespace bica_dialog
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "main_DialogInterface");
-  std::regex intent_in("[[:print:]_]*.info");
-  bica_dialog::ForwarderDF forwarder(intent_in);
-  forwarder.listener();
-  return 0;
+    ros::init(argc, argv, "main_DialogInterface");
+    std::regex intent_in("[[:print:]_]*.info");
+    bica_dialog::ForwarderDF forwarder(intent_in);
+    forwarder.listener();
+    return 0;
 }
