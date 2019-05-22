@@ -40,15 +40,17 @@
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
 #include <string>
+#include "bica/Component.h"
 
 namespace bica_dialog
 {
-class ForwarderDF: public bica_dialog::DialogInterface
+class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
 {
   public:
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
     {
       trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
+      finishSpeakPublisher = nh_.advertise<std_msgs::Empty>("/finish_speak", 1);
     }
 
     void listenCallback(dialogflow_ros_msgs::DialogflowResult result)
@@ -57,6 +59,20 @@ class ForwarderDF: public bica_dialog::DialogInterface
       ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
       result_ = result;
       speak(result_.fulfillment_text);
+      std_msgs::Empty msg;
+      finishSpeakPublisher.publish(msg);
+    }
+
+    void listener(){
+      ros::Rate loop_rate(2);
+      while(ros::ok()){
+        if (isActive()){
+          ROS_INFO("listening...");
+          listen();
+        }
+        ros::spinOnce();
+        loop_rate.sleep();
+      }
     }
 
     void triggerCallback(const std_msgs::Empty::ConstPtr& msg)
@@ -68,6 +84,7 @@ class ForwarderDF: public bica_dialog::DialogInterface
     ros::NodeHandle nh_;
     ros::Subscriber trigger_sub_;
     dialogflow_ros_msgs::DialogflowResult result_;
+    ros::Publisher finishSpeakPublisher;
 };
 }  // namespace bica_dialog
 
@@ -76,9 +93,6 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "main_DialogInterface");
   std::regex intent_in("[[:print:]_]*.info");
   bica_dialog::ForwarderDF forwarder(intent_in);
-  while(ros::ok()){
-      forwarder.listen();
-      ros::spinOnce();
-  }
+  forwarder.listener();
   return 0;
 }
