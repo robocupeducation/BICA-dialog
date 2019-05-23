@@ -92,15 +92,18 @@ bool DialogInterface::speak(std::string str)
     return !is_bussy_;
   else
   {
+    ROS_WARN("Waiting for soundplay server");
     ac.waitForServer();
+    ROS_WARN("Soundplay Ready");
     sound_play::SoundRequestGoal goal;
     goal.sound_request.sound = sound_play::SoundRequest::SAY;
     goal.sound_request.command = sound_play::SoundRequest::PLAY_ONCE;
     goal.sound_request.arg = str;
     goal.sound_request.volume = 1.0;
     ac.sendGoal(goal);
-
+    ROS_WARN("before 30s timeout");
     bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
+    ROS_WARN("finished_before_timeout");
 
     if (finished_before_timeout)
     {
