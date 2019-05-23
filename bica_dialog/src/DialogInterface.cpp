@@ -101,21 +101,24 @@ bool DialogInterface::speak(std::string str)
     goal.sound_request.arg = str;
     goal.sound_request.volume = 1.0;
     ac.sendGoal(goal);
-    ROS_WARN("before 30s timeout");
-    bool finished_before_timeout = ac.waitForResult(ros::Duration(30.0));
-    ROS_WARN("finished_before_timeout");
+    ROS_WARN("before 0.5s timeout");
 
-    if (finished_before_timeout)
+    ros::Rate loop_rate(2);
+    bool finished_before_timeout = false;
+
+    while (!finished_before_timeout)
     {
-      actionlib::SimpleClientGoalState state = ac.getState();
-      ROS_INFO("Sound_play Action finished: %s",state.toString().c_str());
-      return true;
+      finished_before_timeout = ac.waitForResult(ros::Duration(0.5));
+      ROS_WARN("waiting for Soundplay result...");
+      ros::spinOnce();
+      loop_rate.sleep();
     }
-    else
-    {
-      ROS_INFO("Sound_play Action did not finish before the time out.");
-      return false;
-    }
+
+    ROS_WARN("finished_before_timeout");
+    actionlib::SimpleClientGoalState state = ac.getState();
+    ROS_INFO("Sound_play Action finished: %s",state.toString().c_str());
+    return true;
+
   }
 }
 
