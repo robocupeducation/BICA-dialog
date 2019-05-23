@@ -74,7 +74,8 @@ class Checker
         ficheroEntrada.close();
         printf("[Checker] %i \n", atoi( state.c_str() ));
         if (atoi( state.c_str() ) <= 15){
-            
+            msg.data = "Laptop battery is low, please plug it";
+            talkPublisher.publish(msg);
         }
         return 0;
     }
@@ -87,7 +88,7 @@ class Checker
 int main(int argc, char ** argv){
     ros::init(argc, argv, "BatteryCkecker");
     tools::Checker checking;
-    ros::Rate loop_rate(2);
+    ros::Rate loop_rate(0.0166);
     while(ros::ok()){
         checking.check();
         ros::spinOnce();
