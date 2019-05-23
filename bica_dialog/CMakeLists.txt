@@ -36,6 +36,7 @@ add_library(bica_dialog
 )
 
 add_executable(pinger src/pinger.cpp)
+add_executable(batterycontrol src/batterycontrol.cpp)
 add_executable(main_DialogInterface src/main_DialogInterface.cpp)
 add_executable(location_DialogInterface src/location_DialogInterface.cpp)
 add_executable(order_DialogInterface src/order_DialogInterface.cpp)
@@ -47,6 +48,7 @@ add_executable(locationsSubscriber src/locationsSubscriber.cpp)
 
 add_dependencies(bica_dialog ${catkin_EXPORTED_TARGETS})
 add_dependencies(pinger ${catkin_EXPORTED_TARGETS})
+add_dependencies(batterycontrol ${catkin_EXPORTED_TARGETS})
 add_dependencies(main_DialogInterface ${catkin_EXPORTED_TARGETS})
 add_dependencies(location_DialogInterface ${catkin_EXPORTED_TARGETS})
 add_dependencies(order_DialogInterface ${catkin_EXPORTED_TARGETS})
@@ -57,6 +59,7 @@ add_dependencies(locationsSubscriber ${catkin_EXPORTED_TARGETS})
 
 
 target_link_libraries(bica_dialog ${catkin_LIBRARIES})
+target_link_libraries(batterycontrol ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(pinger ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(main_DialogInterface ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(location_DialogInterface ${catkin_LIBRARIES} bica_dialog)

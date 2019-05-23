@@ -57,7 +57,7 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
     }
 
     void listenCallback(dialogflow_ros_msgs::DialogflowResult result){
-        std::regex filter ("(.*)(.location)");
+        std::regex filter ("(.*)(.commands)");
         if (result.query_text != ""){
             ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
             if(regex_match(result.intent, filter)){
