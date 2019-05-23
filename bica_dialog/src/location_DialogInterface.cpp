@@ -42,43 +42,59 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/String.h>
 #include <string>
+#include <regex>
 
 namespace bica_dialog
 {
 class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
 {
   public:
-    ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
-    {
-      trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
-      locationPublisher = nh_.advertise<std_msgs::String>("/locations", 1);
+    ForwarderDF(std::regex intent): nh_(), DialogInterface(intent){
+        trigger_sub_ = nh_.subscribe("/listen", 1, &ForwarderDF::triggerCallback, this); //public on /listen to start listening
+        locationPublisher = nh_.advertise<std_msgs::String>("/locations", 1);
+        finishSpeakPublisher = nh_.advertise<std_msgs::Empty>("/finish_speak", 1);
+        errorPublisher = nh_.advertise<std_msgs::String>("/errors", 1);
     }
 
-    void listenCallback(dialogflow_ros_msgs::DialogflowResult result)
-    {
-      ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
-      result_ = result;
-      std_msgs::String msg;
-      for (int i = 0; i<result.parameters.size();i++){
-        for (int j = 0; j<result.parameters[i].value.size();j++){
-          ROS_INFO("[ForwarderDF] listenCallback:value %s", result.parameters[i].value[j].c_str());
-          msg.data = result.parameters[i].value[j];
-          locationPublisher.publish(msg);
-          ros::spinOnce();
+    void listenCallback(dialogflow_ros_msgs::DialogflowResult result){
+        std::regex filter ("(.*)(.location)");
+        if (result.query_text != ""){
+            ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
+            if(regex_match(result.intent, filter)){
+                result_ = result;
+                std_msgs::String msg;
+                for (int i = 0; i<result.parameters.size();i++){
+                    for (int j = 0; j<result.parameters[i].value.size();j++){
+                        ROS_INFO("[ForwarderDF] listenCallback:value %s", result.parameters[i].value[j].c_str());
+                        msg.data = result.parameters[i].value[j];
+                        locationPublisher.publish(msg);
+                        ros::spinOnce();
+                    }
+                }
+            }else{
+                speak("I didn't catch you, can you repeat it please?");
+                attemp++;
+                if(attemp == 3){
+                    ROS_INFO("[ForwarderDF] number of failed attemps %i", attemp);
+                    std_msgs::String msg;
+                    msg.data = "unknown command";
+                    errorPublisher.publish(msg);
+                    attemp = 0;
+                }
+            }
         }
-      }
     }
 
     void listener(){
-      ros::Rate loop_rate(2);
-      while(ros::ok()){
-        if (isActive()){
-          ROS_INFO("listening...");
-          listen();
+        ros::Rate loop_rate(2);
+        while(ros::ok()){
+            if (isActive()){
+                ROS_INFO("listening...");
+                listen();
+            }
+            ros::spinOnce();
+            loop_rate.sleep();
         }
-        ros::spinOnce();
-        loop_rate.sleep();
-      }
     }
 
     void triggerCallback(const std_msgs::Empty::ConstPtr& msg)
@@ -90,7 +106,10 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
     ros::NodeHandle nh_;
     ros::Subscriber trigger_sub_;
     ros::Publisher locationPublisher;
+    ros::Publisher finishSpeakPublisher;
+    ros::Publisher errorPublisher;
     dialogflow_ros_msgs::DialogflowResult result_;
+    int attemp = 0;
 };
 }  // namespace bica_dialog
 

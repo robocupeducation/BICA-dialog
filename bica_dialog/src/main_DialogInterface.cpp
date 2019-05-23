@@ -63,7 +63,6 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
         ROS_INFO("[ForwarderDF] Query text: %s", result.query_text.c_str());
         if (result.query_text != ""){
             if(regex_match(result.intent, filter)){
-                // ROS_INFO("[ForwarderDF] listenCallback: intent %s", result);
                 ROS_INFO("[ForwarderDF] listenCallback: intent %s", result.intent.c_str());
                 result_ = result;
                 speak(result_.fulfillment_text);
