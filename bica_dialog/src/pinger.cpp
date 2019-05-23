@@ -26,9 +26,7 @@ class Pinger: public bica::Component
 
     int ping(){
         std_msgs::String msg;
-        // msg.data = "network connection unavailable";
-        // errorPublisher.publish(msg);
-        if (system("ping -c 2 www.google.es") != 0){
+        if (system("ping -c 2 www.google.es >/dev/null") != 0){
             msg.data = "network connection unavailable";
             errorPublisher.publish(msg);
             printf("[Pinger] Network status:  Not available \n");
@@ -46,11 +44,13 @@ class Pinger: public bica::Component
 int main(int argc, char ** argv){
     ros::init(argc, argv, "NetworkTester");
     tools::Pinger pinger;
+    ros::Rate loop_rate(2);
     while(ros::ok()){
         if (pinger.isActive()){
             pinger.ping();
             ros::spinOnce();
         }
+        loop_rate.sleep();
     }
     return 0;
 }
