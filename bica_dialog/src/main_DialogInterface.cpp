@@ -46,8 +46,8 @@
 
 namespace bica_dialog
 {
-// class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
-class ForwarderDF: public bica_dialog::DialogInterface
+class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
+// class ForwarderDF: public bica_dialog::DialogInterface
 {
   public:
     ForwarderDF(std::regex intent): nh_(), DialogInterface(intent)
@@ -86,10 +86,10 @@ class ForwarderDF: public bica_dialog::DialogInterface
     void listener(){
       ros::Rate loop_rate(2);
       while(ros::ok()){
-        // if (isActive()){
+        if (isActive()){
           ROS_INFO("listening...");
           listen();
-        // }
+        }
         ros::spinOnce();
         loop_rate.sleep();
       }
