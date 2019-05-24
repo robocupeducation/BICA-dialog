@@ -92,16 +92,16 @@ bool DialogInterface::speak(std::string str)
     return !is_bussy_;
   else
   {
-    ROS_WARN("Waiting for soundplay server");
+    //ROS_WARN("Waiting for soundplay server");
     ac.waitForServer();
-    ROS_WARN("Soundplay Ready");
+    //ROS_WARN("Soundplay Ready");
     sound_play::SoundRequestGoal goal;
     goal.sound_request.sound = sound_play::SoundRequest::SAY;
     goal.sound_request.command = sound_play::SoundRequest::PLAY_ONCE;
     goal.sound_request.arg = str;
     goal.sound_request.volume = 1.0;
     ac.sendGoal(goal);
-    ROS_WARN("before 0.5s timeout");
+    //ROS_WARN("before 0.5s timeout");
 
     ros::Rate loop_rate(2);
     bool finished_before_timeout = false;
@@ -109,12 +109,12 @@ bool DialogInterface::speak(std::string str)
     while (!finished_before_timeout)
     {
       finished_before_timeout = ac.waitForResult(ros::Duration(0.5));
-      ROS_WARN("waiting for Soundplay result...");
+      //ROS_WARN("waiting for Soundplay result...");
       ros::spinOnce();
       loop_rate.sleep();
     }
 
-    ROS_WARN("finished_before_timeout");
+    //ROS_WARN("finished_before_timeout");
     actionlib::SimpleClientGoalState state = ac.getState();
     ROS_INFO("Sound_play Action finished: %s",state.toString().c_str());
     return true;
