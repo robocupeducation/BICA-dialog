@@ -66,9 +66,11 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
                 for (int i = 0; i<result.parameters.size();i++){
                     for (int j = 0; j<result.parameters[i].value.size();j++){
                         ROS_INFO("[ForwarderDF] listenCallback:value %s", result.parameters[i].value[j].c_str());
-                        msg.data = result.parameters[i].value[j];
-                        locationPublisher.publish(msg);
-                        ros::spinOnce();
+                        if (result.parameters[i].value[j] != ""){
+                            msg.data = result.parameters[i].value[j];
+                            locationPublisher.publish(msg);
+                            ros::spinOnce();
+                        }
                     }
                 }
             }else{
