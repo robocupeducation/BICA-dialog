@@ -118,7 +118,7 @@ class ForwarderDF: public bica_dialog::DialogInterface, public bica::Component
 int main(int argc, char** argv)
 {
 
-  ros::init(argc, argv, "location_DialogInterface");
+  ros::init(argc, argv, "open_DialogInterface");
 
   std::regex intent_in("[[:print:]_]*.open");
   bica_dialog::ForwarderDF forwarder(intent_in);
