@@ -1,0 +1,15 @@
+<launch>
+  <!--<include file="$(find darknet_ros)/launch/darknet_ros.launch" />-->
+  <!-- <include file="$(find helpme_carry)/launch/helpme_carry_data_logging.launch" />-->
+  <include file="$(find follow_person)/launch/follow_person.launch" />
+  <node pkg="bica_dialog" type="ros_soundclient.py" name="ros_soundclient" output="screen"/>
+  <node pkg="navigation_robocup_edu" type="mover_node" name="mover_publisher" />
+  <include file="$(find bica_dialog)/launch/bica_dialog_services.launch" />
+  <node pkg="bica_dialog" type="commands_DialogInterface" name="commands_DialogInterface" output="screen"/>
+  <node pkg="bica_dialog" type="location_DialogInterface" name="location_DialogInterface" output="screen"/>
+  <node name="HelpMeCarry_executor_node" pkg="helpme_carry"
+    type="HelpMeCarry_executor_node" respawn="false" output="screen" required="true"/>
+  <!--<node pkg="follow_person" type="face_recognition_node.py" name="face_recognizer_node" />-->
+  <node pkg="bica_dialog" type="pinger" name="pinger" output="screen"/>
+  <node pkg="bica_dialog" type="batterycontrol" name="batterycontrol" output="screen"/>
+</launch>
