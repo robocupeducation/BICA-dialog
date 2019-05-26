@@ -40,6 +40,7 @@ add_executable(batterycontrol src/batterycontrol.cpp)
 add_executable(main_DialogInterface src/main_DialogInterface.cpp)
 add_executable(location_DialogInterface src/location_DialogInterface.cpp)
 add_executable(order_DialogInterface src/order_DialogInterface.cpp)
+
 add_executable(commands_DialogInterface src/commands_DialogInterface.cpp)
 add_executable(talkPublisher src/talkPublisher.cpp)
 add_executable(talkSubscriber src/talkSubscriber.cpp)
@@ -68,7 +69,6 @@ target_link_libraries(commands_DialogInterface ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(talkPublisher ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(talkSubscriber ${catkin_LIBRARIES} bica_dialog)
 target_link_libraries(locationsSubscriber ${catkin_LIBRARIES} bica_dialog)
-
 
 add_executable(example_df_node src/example/exampleDF.cpp)
 add_dependencies(example_df_node ${catkin_EXPORTED_TARGETS} )
